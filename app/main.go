@@ -7,10 +7,6 @@ import (
 	"strings"
 )
 
-// Ensures gofmt doesn't remove the "net" and "os" imports above (feel free to remove this!)
-var _ = net.Listen
-var _ = os.Exit
-
 func main() {
 
 	listener, err := net.Listen("tcp", "0.0.0.0:4221")

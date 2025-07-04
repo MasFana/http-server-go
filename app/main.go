@@ -31,7 +31,6 @@ func main() {
 			_, err = c.Read(req)
 			if err != nil {
 				fmt.Println("Failed to read request")
-				c.Close()
 				return
 			}
 
@@ -39,14 +38,13 @@ func main() {
 			fmt.Println(uri)
 			switch uri {
 			case "/":
+				response := "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<html><body><h1>Welcome to the Go HTTP Server!</h1></body></html>"
+				c.Write([]byte(response))
+				fmt.Println(parseBody(req))
 			default:
 				fmt.Println("Invalid request")
 				c.Write([]byte("HTTP/1.1 404 Not Found\r\n\r\n"))
-				c.Close()
-				return
 			}
-			response := "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<html><body><h1>Welcome to the Go HTTP Server!</h1></body></html>"
-			c.Write([]byte(response))
 		}(conn)
 	}
 
@@ -54,6 +52,13 @@ func main() {
 
 func parseUri(req []byte) string {
 	uri := strings.Split(string(req), "\n")[0]
-	uri = uri[4 : len(uri)-10] // Get only path from the request header
+	uri = strings.Split(uri, " ")[1]
 	return uri
+}
+
+func parseBody(req []byte) string {
+	fmt.Println(string(req))
+	body := strings.Split(string(req), "\n")
+	fmt.Println(body)
+	return body[0]
 }
